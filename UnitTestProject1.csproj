@@ -56,8 +56,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BankToBeTested\BankToBeTested.csproj">
-      <Project>{b6800514-548d-45fb-ba56-250c84126543}</Project>
+    <ProjectReference Include="BankToBeTested\BankToBeTested.csproj">
+      <Project>{822be7ba-993b-4fe1-8861-e8f0a8c1fab1}</Project>
       <Name>BankToBeTested</Name>
     </ProjectReference>
   </ItemGroup>
