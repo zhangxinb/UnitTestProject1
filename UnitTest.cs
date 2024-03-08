@@ -392,5 +392,25 @@ namespace UnitTestProject1
             // Assert
             Assert.IsNull(account);
         }
+
+    }
+
+    [TestClass]
+    public class  Accounts
+    {
+        [TestMethod]
+        public void DepositBalanceZero()
+        {
+            // Arrange
+            Account account = new Account(1);
+            double value = 0.0;
+
+            // Act
+            bool result = account.Transaction(value);
+
+            // Assert
+            Assert.IsTrue(result);
+            Assert.AreEqual(0.0, account.Balance);
+        }
     }
 }
