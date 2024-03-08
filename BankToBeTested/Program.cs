@@ -18,8 +18,10 @@ namespace UnitTestProject1
             int i, first = 100000;
 
             for (i = 0; i < accounts.Length; i++)
-                accounts[i] = new Account(first + i * 11);
-            // accounts[i] = new Account(first + i);
+            { 
+            accounts[i] = new Account(first + i * 11);
+            //accounts[i] = new Account(first + i);
+            }
             // TestListAccounts()
             transactions = new Transaction[1000];
         }
@@ -35,8 +37,8 @@ namespace UnitTestProject1
             }
             return list;
         }
-        /*
-         public int[] ListAccounts()
+        
+         /*public int[] ListAccounts()
         {
             int[] list = new int[accounts.Length];
             for (int i = 0; i < accounts.Length; i++) // Change foreach loop to for loop
@@ -57,23 +59,21 @@ namespace UnitTestProject1
                     i++;
             return accounts[i];
         }
-        /*
-         public Account FindAccount(int id)
+
+        /*public Account FindAccount(int id)
         {
-            if (ListAccounts().Contains(id))
+            foreach (Account account in accounts)
             {
-                int i = 0;
-                while (accounts[i] == null || (accounts[i] != null && accounts[i].AccountId != id))
-                    i++;
-                return accounts[i];
+                if (account != null && account.AccountId == id)
+                    return account;
             }
             return null; // Return null if the id is not found
         }
-         */
+        */
 
         public bool AddTransaction(Account to, Account from, double value)
         {
-            if (from.Balance < value)
+            if (from.Balance < value)// >= TestAddTransaction_InsufficientBalance()
             {
                 transactions[transactionCount++] = new Transaction(to, from, value);
                 return true;
@@ -121,19 +121,20 @@ namespace UnitTestProject1
                 balance += val;
                 return true;
             }
+            
             else if (balance >= val)
             {
                 balance -= val;
                 return true;
             }
-            /*
-             else if (val < 0 && balance >= Math.Abs(val))
+            
+             /*else if (val < 0 && balance >= Math.Abs(val))
             {
                 balance -= Math.Abs(val);
                 return true;
             }
-            //TestAccountTransaction_SubtractValue(), TestAccountTransaction_SubtractMoreThanBalance()，estAccountTransaction_AddNegativeValue()
-             */
+            //TestAccountTransaction_SubtractValue(), TestAccountTransaction_SubtractMoreThanBalance()，TestAccountTransaction_AddNegativeValue(), TestAddTransaction_ValidParameters()
+            */
             return false;
         }
     }
@@ -145,13 +146,15 @@ namespace UnitTestProject1
         private double transactionValue;
 
         public Transaction(Account _from, Account _to, double value)
+        //public Transaction(Account _to, Account _from, double value)
         {
             /*
             if (_from == null || _to == null)
                 throw new ArgumentNullException(_from == null ? "from" : "to");
-            to = _to;
-            from = _from;
-             */
+            */
+            //to = _to;
+            //from = _from;
+
             if (value < 0)
                 throw new ArgumentOutOfRangeException("value", "Negative transaction value at constructor of class Transaction");
             if (value > from.Balance)
