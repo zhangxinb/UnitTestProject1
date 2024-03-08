@@ -19,6 +19,8 @@ namespace UnitTestProject1
 
             for (i = 0; i < accounts.Length; i++)
                 accounts[i] = new Account(first + i * 11);
+            // accounts[i] = new Account(first + i);
+            // TestListAccounts()
             transactions = new Transaction[1000];
         }
 
@@ -33,6 +35,18 @@ namespace UnitTestProject1
             }
             return list;
         }
+        /*
+         public int[] ListAccounts()
+        {
+            int[] list = new int[accounts.Length];
+            for (int i = 0; i < accounts.Length; i++) // Change foreach loop to for loop
+            {
+                 if (accounts[i] != null)
+                      list[i] = accounts[i].AccountId;
+            }
+              return list;
+        }
+         */
 
         public Account FindAccount(int id)
         {
@@ -43,6 +57,19 @@ namespace UnitTestProject1
                     i++;
             return accounts[i];
         }
+        /*
+         public Account FindAccount(int id)
+        {
+            if (ListAccounts().Contains(id))
+            {
+                int i = 0;
+                while (accounts[i] == null || (accounts[i] != null && accounts[i].AccountId != id))
+                    i++;
+                return accounts[i];
+            }
+            return null; // Return null if the id is not found
+        }
+         */
 
         public bool AddTransaction(Account to, Account from, double value)
         {
@@ -99,6 +126,14 @@ namespace UnitTestProject1
                 balance -= val;
                 return true;
             }
+            /*
+             else if (val < 0 && balance >= Math.Abs(val))
+            {
+                balance -= Math.Abs(val);
+                return true;
+            }
+            //TestAccountTransaction_SubtractValue(), TestAccountTransaction_SubtractMoreThanBalance()，estAccountTransaction_AddNegativeValue()
+             */
             return false;
         }
     }
@@ -111,6 +146,12 @@ namespace UnitTestProject1
 
         public Transaction(Account _from, Account _to, double value)
         {
+            /*
+            if (_from == null || _to == null)
+                throw new ArgumentNullException(_from == null ? "from" : "to");
+            to = _to;
+            from = _from;
+             */
             if (value < 0)
                 throw new ArgumentOutOfRangeException("value", "Negative transaction value at constructor of class Transaction");
             if (value > from.Balance)
