@@ -80,7 +80,24 @@ namespace UnitTestProject1
             }
             return false;
         }
+        /*public bool AddTransaction(Account to, Account from, double value)
+        {
+         // Check if the accounts exist in the bank account list.TestAddTransaction_NonExistentAccount()
+          if (to == null || from == null || !ListAccounts().Contains(to.AccountId) || !ListAccounts().Contains      (from.AccountId))
+              return false;
 
+            // Check if the two accounts are the same. TestAddTransaction_SameAccount()
+          if (to.AccountId == from.AccountId)
+                return false;
+
+            // Check if the transaction value is higher than the balance of the "from" account
+            if (from.Balance < value)
+                return false;
+
+            // If all checks pass, add the transaction
+            transactions[transactionCount++] = new Transaction(to, from, value);
+            return true;
+        }*/
     }
 
     public class Account
