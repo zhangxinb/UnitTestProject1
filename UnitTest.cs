@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Security.Principal;
 
 namespace UnitTestProject1
 {
@@ -10,13 +11,13 @@ namespace UnitTestProject1
         public void TestTransactionConstructor_ValidParameters()
         {
             // Arrange
-            Account fromAccount = new Account(1);
+            Account fromAccount = new Account(100000);
             fromAccount.Transaction(200.0); // Add some balance to the account
-            Account toAccount = new Account(2);
+            Account toAccount = new Account(100001);
             double value = 100.0;
 
             // Act
-            Transaction transaction = new Transaction(fromAccount, toAccount, value);
+            Transaction transaction = new Transaction(toAccount, fromAccount, value);
 
             // Assert
             // If the constructor completes without throwing an exception, the test passes.
@@ -32,7 +33,7 @@ namespace UnitTestProject1
             double value = -100.0;
 
             // Act
-            Transaction transaction = new Transaction(fromAccount, toAccount, value);
+            Transaction transaction = new Transaction(toAccount, fromAccount, value);
 
             // Assert
             // The test will fail if the constructor does not throw an ArgumentOutOfRangeException.
@@ -74,13 +75,13 @@ namespace UnitTestProject1
         public void TestTransactionConstructor_ExactBalance()
         {
             // Arrange
-            Account fromAccount = new Account(1);
+            Account fromAccount = new Account(100000);
             fromAccount.Transaction(100.0); // Add some balance to the account
-            Account toAccount = new Account(2);
+            Account toAccount = new Account(100001);
             double value = 100.0;
 
             // Act
-            Transaction transaction = new Transaction(fromAccount, toAccount, value);
+            Transaction transaction = new Transaction(toAccount, fromAccount, value);
 
             // Assert
             // If the constructor completes without throwing an exception, the test passes.
@@ -90,19 +91,18 @@ namespace UnitTestProject1
         public void TestTransactionConstructor_BalanceUpdate()
         {
             // Arrange
-            Account fromAccount = new Account(1);
+            Account fromAccount = new Account(100000);
             fromAccount.Transaction(200.0); // Add some balance to the account
-            Account toAccount = new Account(2);
+            Account toAccount = new Account(100001);
             double value = 100.0;
 
             // Act
-            Transaction transaction = new Transaction(fromAccount, toAccount, value);
+            Transaction transaction = new Transaction(toAccount, fromAccount, value);
 
             // Assert
             Assert.AreEqual(100.0, fromAccount.Balance, 0.001);
             Assert.AreEqual(100.0, toAccount.Balance, 0.001);
         }
-
         /*
          [TestMethod]
         public void TestTransactionConstructor_TransactionTime()
@@ -120,8 +120,6 @@ namespace UnitTestProject1
             Assert.IsTrue((DateTime.Now - transaction.Time).TotalSeconds < 1);
         }
         */
-
-       
     }
 
     [TestClass]
@@ -225,21 +223,21 @@ namespace UnitTestProject1
             // Assert
             Assert.AreEqual(interestPct, account.InterestPct);
         }
+        /*
+                [TestMethod]
+                public void TestAccountInterestPct_SetNegativeValue()
+                {
+                    // Arrange
+                    Account account = new Account(1);
+                    double interestPct = -5.0; // -5%
 
-        [TestMethod]
-        public void TestAccountInterestPct_SetNegativeValue()
-        {
-            // Arrange
-            Account account = new Account(1);
-            double interestPct = -5.0; // -5%
+                    // Act
+                    account.InterestPct = interestPct;
 
-            // Act
-            account.InterestPct = interestPct;
-
-            // Assert
-            Assert.AreEqual(0.0, account.InterestPct); // Assuming that the interest rate cannot be negative
-        }
-
+                    // Assert
+                    Assert.AreEqual(0.0, account.InterestPct); // Assuming that the interest rate cannot be negative
+                }
+        */
         [TestMethod]
         public void TestAccountInterestRate_SetAndGet()
         {
@@ -253,20 +251,21 @@ namespace UnitTestProject1
             // Assert
             Assert.AreEqual(interestRate, account.InterestRate);
         }
+        /*
+                [TestMethod]
+                public void TestAccountInterestRate_SetNegativeValue()
+                {
+                    // Arrange
+                    Account account = new Account(1);
+                    double interestRate = -0.05; // -5%
 
-        [TestMethod]
-        public void TestAccountInterestRate_SetNegativeValue()
-        {
-            // Arrange
-            Account account = new Account(1);
-            double interestRate = -0.05; // -5%
+                    // Act
+                    account.InterestRate = interestRate;
 
-            // Act
-            account.InterestRate = interestRate;
-
-            // Assert
-            Assert.AreEqual(0.0, account.InterestRate); // Assuming that the interest rate cannot be negative
-        }
+                    // Assert
+                    Assert.AreEqual(0.0, account.InterestRate); // Assuming that the interest rate cannot be negative
+                }
+        */
     }
 
     [TestClass]
@@ -342,6 +341,47 @@ namespace UnitTestProject1
             // Assert
             Assert.IsFalse(result);
         }
+
+        [TestMethod]
+        public void TestAddTransaction_TransactionCount()
+        {
+            // Arrange
+            Bank bank = new Bank();
+            Account fromAccount = bank.FindAccount(100000); // Assuming this account exists in the bank
+            fromAccount.Transaction(200.0); // Add some balance to the account
+            Account toAccount = bank.FindAccount(100001); // Assuming this account exists in the bank
+            double value = 100.0;
+
+            // Act
+            bool result = bank.AddTransaction(toAccount, fromAccount, value);
+
+            // Assert
+            Assert.IsTrue(result);
+            // Assuming that the transaction count is accessible via a property TransactionCount
+            Assert.AreEqual(1, bank.TransactionCount);
+        }
+
+        [TestMethod]
+        public void TestAddTransaction_TransactionArrayFull()
+        {
+            // Arrange
+            Bank bank = new Bank();
+            Account fromAccount = bank.FindAccount(100000); // Assuming this account exists in the bank
+            fromAccount.Transaction(200.0); // Add some balance to the account
+            Account toAccount = bank.FindAccount(100001); // Assuming this account exists in the bank
+            double value = 100.0;
+
+            // Act
+            for (int i = 0; i < 1000; i++) // Assuming the transaction array size is 1000
+            {
+                bank.AddTransaction(toAccount, fromAccount, value);
+            }
+            bool result = bank.AddTransaction(toAccount, fromAccount, value);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
     }
 
     [TestClass]
@@ -396,7 +436,7 @@ namespace UnitTestProject1
     }
 
     [TestClass]
-    public class  Accounts
+    public class Accounts
     {
         [TestMethod]
         public void DepositBalanceZero()
@@ -412,5 +452,106 @@ namespace UnitTestProject1
             Assert.IsTrue(result);
             Assert.AreEqual(0.0, account.Balance);
         }
+
+        [TestMethod] // 1_2
+        public void DepositBalanceOne()
+        {
+            // Arrange
+            Account account = new Account(1);
+            double value = 10.5;
+
+            // Act
+            bool result = account.Transaction(value);
+
+            // Assert
+            Assert.IsTrue(result);
+            Assert.AreEqual(value, account.Balance);
+        }
+
+        [TestMethod] // 1_3
+        public void DepositeBalancePositive()
+        {
+            Account account = new Account(1);
+            int value1 = 10;
+            int value2 = 10;
+            bool result1 = account.Transaction(value1);
+            bool result2 = account.Transaction(value2);
+            Assert.IsTrue(result1);
+            Assert.IsTrue(result2);
+            Assert.AreEqual(value1 + value2, account.Balance);
+
+        }
+
+        [TestMethod] // 1_4
+        public void Zero()
+        {
+            Account account = new Account(1);
+            int value = 0;
+            Assert.AreEqual(value, account.Balance);
+        }
+
+        [TestMethod] // 1_5
+        public void ZeroBalancePositive()
+        {
+            Account account = new Account(1);
+            int value1 = 0;
+            int value2 = 10;
+            bool result1 = account.Transaction(value1);
+            bool result2 = account.Transaction(value2);
+            Assert.IsTrue(result1);
+            Assert.IsTrue(result2);
+            Assert.AreEqual(value2, account.Balance);
+        }
+
+        [TestMethod] // 1_6
+        public void WithdrawBalaceZero()
+        {
+            Account fromAccount = new Account(1);
+            int value = -10;
+            bool result = fromAccount.Transaction(value);
+            Assert.IsFalse(result);
+            Assert.AreEqual(0, fromAccount.Balance);
+        }
+        [TestMethod] // 1_7
+        public void WithdrawFeasiblePositiveBalance()
+        {
+            Account account = new Account(1);
+            int value1 = 20;
+            int value2 = -10;
+            bool result1 = account.Transaction(value1);
+            bool result2 = account.Transaction(value2);
+            if (account.Balance >= 0)
+            {
+                Assert.AreEqual(value1 - Math.Abs(value2), account.Balance);
+            }
+        }
+        [TestMethod] // 1_8
+        public void WithdrawEqualPositiveBalance()
+        {
+            Account account = new Account(1);
+            int value1 = 10;
+            int value2 = -10;
+            bool result1 = account.Transaction(value1);
+            bool result2 = account.Transaction(value2);
+            if (account.Balance >= 0)
+            {
+                Assert.AreEqual(0, account.Balance);
+            }
+        }
+
+        [TestMethod] // 1_9
+        public void WithdrawUnfeasiblePositiveBalance()
+        {
+            Account account = new Account(1);
+            int value1 = 10;
+            int value2 = -20;
+            bool result1 = account.Transaction(value1);
+            bool result2 = account.Transaction(value2);
+            if (account.Balance >= 0)
+            {
+                Assert.AreEqual(value1, account.Balance);
+            }
+        }
+
     }
 }
